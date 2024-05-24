@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.members import router as members
+from routes.projects import router as projects
+from routes.overview import router as overview
 
 app = FastAPI()
 
@@ -14,6 +16,8 @@ app.add_middleware(
 )
 
 app.include_router(members, prefix="/members")
+app.include_router(projects, prefix="/projects")
+app.include_router(overview, prefix="/overview")
 
 
 @app.get("/")

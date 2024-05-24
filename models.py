@@ -1,8 +1,10 @@
 from sqlmodel import SQLModel, Field, Relationship, create_engine, Session
 from typing import Optional, List
 from datetime import datetime
+from faker import Faker
 import random
 
+faker = Faker()
 
 class Project(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -65,15 +67,14 @@ class SubteamRole(SQLModel, table=True):
 
 # Database setup
 
-# sqlite_url = "sqlite:///database.db"
-# engine = create_engine(sqlite_url)
+sqlite_url = "sqlite:///database.db"
+engine = create_engine(sqlite_url)
+
+SQLModel.metadata.create_all(engine)
+
+
+# Dummy data
 #
-# SQLModel.metadata.create_all(engine)
-#
-
-
-# # Dummy data
-
 # # Function to generate random boolean
 # def random_bool():
 #     return bool(random.getrandbits(1))
@@ -156,3 +157,126 @@ class SubteamRole(SQLModel, table=True):
 #         session.add(subteam_role)
 #
 #     session.commit()
+
+
+# Function to create dummy data
+#
+# def create_dummy_data():
+#     with Session(engine) as session:
+#         for _ in range(10):
+#             project = Project(
+#                 name=faker.company(),
+#                 is_robo_cup=faker.boolean(),
+#                 is_completed=faker.boolean(),
+#                 description=faker.text(),
+#                 image="https://material.angular.io/assets/img/examples/shiba2.jpg",
+#                 github=faker.url(),
+#                 weblink=faker.url(),
+#                 time=faker.date_time_this_decade()
+#             )
+#             session.add(project)
+#             session.commit()
+#
+#             for _ in range(3):
+#                 subteam = Subteam(
+#                     name=faker.bs(),
+#                     project_id=project.id
+#                 )
+#                 session.add(subteam)
+#                 session.commit()
+#
+#                 for _ in range(5):
+#                     member = Member(
+#                         name=faker.name(),
+#                         is_captain=faker.boolean(),
+#                         is_retired=faker.boolean(),
+#                         discipline=faker.job(),
+#                         bio=faker.text(),
+#                         image="https://material.angular.io/assets/img/examples/shiba2.jpg",
+#                         email=faker.email(),
+#                         github=faker.url(),
+#                         linkedin=faker.url(),
+#                         weblink=faker.url(),
+#                         time=faker.date_time_this_decade()
+#                     )
+#                     session.add(member)
+#                     session.commit()
+#
+#                     subteam_role = SubteamRole(
+#                         name=faker.job(),
+#                         subteam_id=subteam.id,
+#                         member_id=member.id
+#                     )
+#                     session.add(subteam_role)
+#                     session.commit()
+#
+#         session.commit()
+#
+# # Create the dummy data
+# create_dummy_data()
+
+# # Function to create dummy data
+# def create_dummy_data():
+#     with Session(engine) as session:
+#         for _ in range(10):
+#             project = Project(
+#                 name=faker.company(),
+#                 is_robo_cup=faker.boolean(),
+#                 is_completed=faker.boolean(),
+#                 description=faker.text(),
+#                 image="https://material.angular.io/assets/img/examples/shiba2.jpg",
+#                 github=faker.url(),
+#                 weblink=faker.url(),
+#                 time=faker.date_time_this_decade()
+#             )
+#             session.add(project)
+#             session.commit()
+#
+#             for _ in range(3):
+#                 subteam = Subteam(
+#                     name=faker.bs(),
+#                     project_id=project.id
+#                 )
+#                 session.add(subteam)
+#                 session.commit()
+#
+#                 for _ in range(5):
+#                     member = Member(
+#                         name=faker.name(),
+#                         is_captain=faker.boolean(),
+#                         is_retired=faker.boolean(),
+#                         discipline=faker.job(),
+#                         bio=faker.text(),
+#                         image="https://material.angular.io/assets/img/examples/shiba2.jpg",
+#                         email=faker.email(),
+#                         github=faker.url(),
+#                         linkedin=faker.url(),
+#                         weblink=faker.url(),
+#                         time=faker.date_time_this_decade()
+#                     )
+#                     session.add(member)
+#                     session.commit()
+#
+#                     subteam_role = SubteamRole(
+#                         name=faker.job(),
+#                         subteam_id=subteam.id,
+#                         member_id=member.id
+#                     )
+#                     session.add(subteam_role)
+#                     session.commit()
+#
+#                     # Adding ProjectRole for each member in the project
+#                     project_role = ProjectRole(
+#                         is_lead=faker.boolean(),
+#                         is_colead=faker.boolean(),
+#                         name=faker.job(),
+#                         project_id=project.id,
+#                         member_id=member.id
+#                     )
+#                     session.add(project_role)
+#                     session.commit()
+#
+#         session.commit()
+#
+# # Create the dummy data
+# create_dummy_data()
