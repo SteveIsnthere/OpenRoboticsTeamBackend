@@ -17,19 +17,25 @@ router = APIRouter()
 #         raise HTTPException(status_code=404, detail="No projects found")
 #     return projects
 
-@router.get("/get/{newest_first}/{is_completed}", response_model=List[Project])
-async def get_projects(newest_first: bool, is_completed: bool, session: Session = Depends(get_session)):
-    projects = session.exec(select(Project).where(Project.is_completed == is_completed)).all()
-    if newest_first:
-        projects = sorted(projects, key=lambda x: x.time, reverse=True)
+@router.get("/get/{is_completed}", response_model=List[Project])
+async def get_projects(is_completed: bool, session: Session = Depends(get_session)):
+    projects = session.exec(select(Project).where(Project.is_completed == is_completed).limit(100)).all()
     if not projects:
         raise HTTPException(status_code=404, detail="No projects found")
     return projects
 
 
-@router.post("/create")
-async def create_project(project: Project, session: Session = Depends(get_session)):
-    session.add(project)
-    session.commit()
-    session.refresh(project)
-    return True
+@router.get("/get_projects_member_joined/{member_id}", response_model=List[Project])
+async def get_projects_member_joined(member_id: int, session: Session = Depends(get_session)):
+    projects = session.exec(select(Project).join(ProjectRole).where(ProjectRole.member_id == member_id)).all()
+    if not projects:
+        raise HTTPException(status_code=404, detail="No projects found")
+    return projects
+
+
+@router.get("/get_members_of_project/{project_id}", response_model=List[Member])
+async def get_members_of_project(project_id: int, session: Session = Depends(get_session)):
+    members = session.exec(select(Member).join(ProjectRole).where(ProjectRole.project_id == project_id)).all()
+    if not members:
+        raise HTTPException(status_code=404, detail="No members found")
+    return members

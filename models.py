@@ -138,3 +138,106 @@ SQLModel.metadata.create_all(engine)
 #
 # # Create the dummy data
 # create_dummy_data()
+#
+# List of specific disciplines
+disciplines = ["Mechanical Engineering", "Electrical Engineering", "Computer Science", "Robotics", "Aerospace Engineering"]
+
+# List of robotic project names
+robotic_project_names = [
+    "Autonomous Navigation System", "Robotic Arm Control", "AI-Powered Surveillance Drone",
+    "Underwater Exploration Robot", "Smart Agriculture Robot", "Rescue Assistance Robot",
+    "Industrial Automation System", "AI-Driven Robot Assistant", "Medical Assistance Robot",
+    "Self-Learning AI Robot"
+]
+
+# Function to create dummy data
+def create_dummy_data():
+    with Session(engine) as session:
+        for project_name in robotic_project_names:
+            project = Project(
+                name=project_name,
+                is_robo_cup=faker.boolean(),
+                is_completed=faker.boolean(),
+                description=faker.text(),
+                image="https://material.angular.io/assets/img/examples/shiba2.jpg",
+                github=faker.url(),
+                weblink=faker.url(),
+                time=faker.date_time_this_decade()
+            )
+            session.add(project)
+            session.commit()
+
+            members = []
+            captain_assigned = False
+
+            for _ in range(3):
+                subteam = Subteam(
+                    name=faker.bs(),
+                    project_id=project.id
+                )
+                session.add(subteam)
+                session.commit()
+
+                for _ in range(5):
+                    member = Member(
+                        name=faker.name(),
+                        is_captain=(not captain_assigned),
+                        is_retired=faker.boolean() if captain_assigned else False,
+                        discipline=random.choice(disciplines),
+                        bio=faker.text(),
+                        image="https://material.angular.io/assets/img/examples/shiba2.jpg",
+                        email=faker.email(),
+                        github=faker.url(),
+                        linkedin=faker.url(),
+                        weblink=faker.url(),
+                        time=faker.date_time_this_decade()
+                    )
+                    session.add(member)
+                    session.commit()
+                    members.append(member)
+
+                    if not member.is_retired and member.is_captain:
+                        captain_assigned = True
+
+                    subteam_role = SubteamRole(
+                        name=faker.job(),
+                        subteam_id=subteam.id,
+                        member_id=member.id
+                    )
+                    session.add(subteam_role)
+                    session.commit()
+
+            # Ensure some members are not part of any subteam
+            for _ in range(2):
+                member = Member(
+                    name=faker.name(),
+                    is_captain=False,
+                    is_retired=faker.boolean(),
+                    discipline=random.choice(disciplines),
+                    bio=faker.text(),
+                    image="https://material.angular.io/assets/img/examples/shiba2.jpg",
+                    email=faker.email(),
+                    github=faker.url(),
+                    linkedin=faker.url(),
+                    weblink=faker.url(),
+                    time=faker.date_time_this_decade()
+                )
+                session.add(member)
+                session.commit()
+                members.append(member)
+
+            for member in members:  # Ensure each member has at least one project role
+                project_role = ProjectRole(
+                    is_lead=faker.boolean(),
+                    is_colead=faker.boolean(),
+                    name=faker.job(),
+                    project_id=project.id,
+                    member_id=member.id
+                )
+                session.add(project_role)
+                session.commit()
+
+        session.commit()
+
+# Create the dummy data
+create_dummy_data()
